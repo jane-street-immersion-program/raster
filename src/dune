@@ -1,0 +1,10 @@
+(library (
+  (name image_exercise_lib)
+  (libraries 
+    core
+    expect_test_helpers_base
+    expect_test_helpers_core
+    filename_unix
+    file_path
+    expect_test_helpers_async)))
+
