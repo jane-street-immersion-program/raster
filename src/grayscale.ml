@@ -1,4 +1,4 @@
-open! Core
+open Core
 
 (* You need to change the implementation of this function so that it does something
    to the image instead of just leaving it untouched. *)

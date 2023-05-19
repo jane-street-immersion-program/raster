@@ -1,10 +1,12 @@
-(library (
+(library 
   (name image_exercise_lib)
   (libraries 
     core
-    expect_test_helpers_base
     expect_test_helpers_core
-    filename_unix
+    core_unix
+    core_unix.command_unix
     file_path
-    expect_test_helpers_async)))
+    expect_test_helpers_async)
+  (preprocess (pps ppx_jane))
+)
 
