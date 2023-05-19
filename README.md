@@ -1,0 +1,2 @@
+# raster
+Image-manipulation exercises
