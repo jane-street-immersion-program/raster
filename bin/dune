@@ -1,0 +1,6 @@
+(executable
+ (name image_exercise)
+ (libraries
+  image_exercise_lib
+ )
+)
