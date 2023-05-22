@@ -72,7 +72,8 @@ The files for this exercise are contained in this repository. These files are:
     - `image_exercise_lib.ml` and `image_exercise_lib.mli`: a module to set up the
       terminal commands for each problem.
 - `bin` directory
-    - `image_exercise.ml` and `image_exercise.mli`: a module to set up
+    - `image_exercise.ml` and `image_exercise.mli`: a module that wraps around the
+      Image_exercise_lib module in the `src` dir.
 - `images` directory
     - `beach_portrait.ppm`: a picture of some backpacking goofball, used as the input
       image for `grayscale.ml`
@@ -89,6 +90,8 @@ The files for this exercise are contained in this repository. These files are:
     - `reference-beach_portrait_blur.ppm`: the expected output image for `blur.ml`,
       provided for your reference
     - `fruit.ppm`
+- `test` directory
+    - Starter code for unit test you may wish to write.
 
 ## PPM Images
 
@@ -152,7 +155,7 @@ image with the appropriate pixels in `image` replaced with pixels from `backgrou
 you have implemented a correct solution, running
 
 ```sh
-./_build/default/bin/image_exercise.exe bluescreen -foreground bin/images/oz_bluescreen.ppm \
+./_build/default/bin/image_exercise.exe bluescreen -foreground images/oz_bluescreen.ppm \
   -background bin/images/meadow.ppm
 ```
 
@@ -198,7 +201,7 @@ result in much slower performance.
 When you have implemented a correct solution, running
 
 ```sh
-./_build/default/bin/image_exercise.exe blur -filename bin/images/beach_portrait.ppm -radius 3
+./_build/default/bin/image_exercise.exe blur -filename images/beach_portrait.ppm -radius 3
 ```
 
 should produce a file called `beach_portrait_blur.ppm` that is the same image as
