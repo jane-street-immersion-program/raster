@@ -18,7 +18,11 @@ let no_green img = Image.map img ~f:(fun (r, g, b) -> (r, 0, b))
 
 ## Prep Work
 
-Fork this repo and then clone it locally (on your AWS machine) to get started.
+First fork this repository by visiting 
+[this page](https://github.com/jane-street-immersion-program/raster/fork) and
+clicking on the green "Create fork" button at the bottom.
+
+Then clone the fork locally (on your AWS machine) to get started.
 You can clone a repo on the command line like this:
 
 ```console
@@ -121,7 +125,7 @@ the original image. That is $R_{gray} = G_{gray} = B_{gray} = \frac{R + G + B}{3
 you have implemented a correct solution, running
 
 ```sh
-./_build/default/bin/image_exercise.exe grayscale -filename images/beach_portrait.ppm
+dune exec bin/image_exercise.exe grayscale -filename images/beach_portrait.ppm
 ```
 
 from the project directory should produce a file called `beach_portrait_gray.ppm`
@@ -155,7 +159,7 @@ image with the appropriate pixels in `image` replaced with pixels from `backgrou
 you have implemented a correct solution, running
 
 ```sh
-./_build/default/bin/image_exercise.exe bluescreen -foreground images/oz_bluescreen.ppm \
+dune exec bin/image_exercise.exe bluescreen -foreground images/oz_bluescreen.ppm \
   -background images/meadow.ppm
 ```
 
@@ -201,7 +205,7 @@ result in much slower performance.
 When you have implemented a correct solution, running
 
 ```sh
-./_build/default/bin/image_exercise.exe blur -filename images/beach_portrait.ppm -radius 3
+dune exec bin/image_exercise.exe blur -filename images/beach_portrait.ppm -radius 3
 ```
 
 should produce a file called `beach_portrait_blur.ppm` that is the same image as
