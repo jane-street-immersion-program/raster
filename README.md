@@ -39,7 +39,7 @@ run the executable binary like this:
 $ cd raster/
 $ dune build
 $ dune runtest
-$ ./_build/defaul./_build/default/bin/image_exercise.exe help
+$ ./_build/default/bin/image_exercise.exe help
 A tool to perform various image manipulations
 
   image_exercise.exe SUBCOMMAND
