@@ -91,7 +91,7 @@ The files for this exercise are contained in this repository. These files are:
       provided for your reference
     - `fruit.ppm`
 - `test` directory
-    - Starter code for unit test you may wish to write.
+    - Starter code for unit tests you may wish to write.
 
 ## PPM Images
 
@@ -121,7 +121,7 @@ the original image. That is $R_{gray} = G_{gray} = B_{gray} = \frac{R + G + B}{3
 you have implemented a correct solution, running
 
 ```sh
-./_build/default/bin/image_exercise.exe grayscale -filename bin/images/beach_portrait.ppm
+./_build/default/bin/image_exercise.exe grayscale -filename images/beach_portrait.ppm
 ```
 
 from the project directory should produce a file called `beach_portrait_gray.ppm`
@@ -156,7 +156,7 @@ you have implemented a correct solution, running
 
 ```sh
 ./_build/default/bin/image_exercise.exe bluescreen -foreground images/oz_bluescreen.ppm \
-  -background bin/images/meadow.ppm
+  -background images/meadow.ppm
 ```
 
 from the project directory should produce a file called `oz_bluescreen_vfx.ppm` that is
