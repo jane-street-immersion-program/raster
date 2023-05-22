@@ -2,7 +2,6 @@
   (name image_exercise_lib)
   (libraries 
     core
-    expect_test_helpers_core
     core_unix
     core_unix.command_unix
     file_path
