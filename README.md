@@ -39,7 +39,7 @@ run the executable binary like this:
 $ cd raster/
 $ dune build
 $ dune runtest
-$ ./_build/default/bin/image_exercise.exe help
+$ ./_build/defaul./_build/default/bin/image_exercise.exe help
 A tool to perform various image manipulations
 
   image_exercise.exe SUBCOMMAND
@@ -118,7 +118,7 @@ the original image. That is $R_{gray} = G_{gray} = B_{gray} = \frac{R + G + B}{3
 you have implemented a correct solution, running
 
 ```sh
-./bin/image_exercise.exe grayscale -filename bin/images/beach_portrait.ppm
+./_build/default/bin/image_exercise.exe grayscale -filename bin/images/beach_portrait.ppm
 ```
 
 from the project directory should produce a file called `beach_portrait_gray.ppm`
@@ -152,7 +152,7 @@ image with the appropriate pixels in `image` replaced with pixels from `backgrou
 you have implemented a correct solution, running
 
 ```sh
-./bin/image_exercise.exe bluescreen -foreground bin/images/oz_bluescreen.ppm \
+./_build/default/bin/image_exercise.exe bluescreen -foreground bin/images/oz_bluescreen.ppm \
   -background bin/images/meadow.ppm
 ```
 
@@ -198,7 +198,7 @@ result in much slower performance.
 When you have implemented a correct solution, running
 
 ```sh
-./bin/image_exercise.exe blur -filename bin/images/beach_portrait.ppm -radius 3
+./_build/default/bin/image_exercise.exe blur -filename bin/images/beach_portrait.ppm -radius 3
 ```
 
 should produce a file called `beach_portrait_blur.ppm` that is the same image as
