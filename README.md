@@ -14,17 +14,43 @@ a new image with all of the green color removed from each pixel:
 let no_green img = Image.map img ~f:(fun (r, g, b) -> (r, 0, b))
 ```
 
+## Prep Work
+
 Fork this repo and then clone it locally (on your AWS machine) to get started.
 You can clone a repo on the command line like this:
 
 ```console
 $ git clone git@github.com:$USER/raster.git
 Cloning into 'raster'...
-remote: Enumerating objects: 10, done.
-remote: Counting objects: 100% (10/10), done.
-remote: Compressing objects: 100% (7/7), done.
-remote: Total 10 (delta 0), reused 6 (delta 0), pack-reused 0
-Receiving objects: 100% (10/10), done.
+remote: Enumerating objects: 64, done.
+remote: Counting objects: 100% (64/64), done.
+remote: Compressing objects: 100% (48/48), done.
+remote: Total 64 (delta 10), reused 59 (delta 9), pack-reused 0
+Receiving objects: 100% (64/64), done.
+Resolving deltas: 100% (64/64), done.
+```
+
+Now you should be able to enter the project directory, build the starter code, and
+run the executable binary like this:
+
+```console
+$ cd raster/
+$ dune build
+$ dune runtest
+$ ./_build/default/bin/image_exercise.exe help
+A tool to perform various image manipulations
+
+  image_exercise.exe SUBCOMMAND
+
+=== subcommands ===
+
+  bluescreen                 . Replace the 'blue' pixels of an image with those
+                               from another image
+  blur                       . Blur an image
+  dither                     . Dither an image
+  grayscale                  . Convert an image to grayscale
+  version                    . print version information
+  help                       . explain a given subcommand (perhaps recursively)
 ```
 
 ## Directory Layout
