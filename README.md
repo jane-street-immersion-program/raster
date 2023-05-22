@@ -3,8 +3,10 @@
 In this exercise you will apply your knowledge of lists and loops to the task of *image
 processing*.
 
-First, some background. You can think of a digital image as a large two-dimensional array
-of pixels, each of which has a red (R) value, a green (G) value, and a blue (B) value.
+## Background
+
+You can think of a digital image as a large two-dimensional array of pixels, 
+each of which has a red (R) value, a green (G) value, and a blue (B) value.
 An R, G, or B value is just an integer between 0 and a maximum value defined by the image
 (usually 255 or 65535). To transform an image, you can *map over* all of these pixels,
 one at a time, and do something to some or all of the pixels. For example, to generate
@@ -116,7 +118,7 @@ the original image. That is $R_{gray} = G_{gray} = B_{gray} = \frac{R + G + B}{3
 you have implemented a correct solution, running
 
 ```sh
-./bin/image-exercise.exe grayscale -filename bin/images/beach_portrait.ppm
+./bin/image_exercise.exe grayscale -filename bin/images/beach_portrait.ppm
 ```
 
 from the project directory should produce a file called `beach_portrait_gray.ppm`
@@ -150,7 +152,7 @@ image with the appropriate pixels in `image` replaced with pixels from `backgrou
 you have implemented a correct solution, running
 
 ```sh
-./bin/image-exercise.exe bluescreen -foreground bin/images/oz_bluescreen.ppm \
+./bin/image_exercise.exe bluescreen -foreground bin/images/oz_bluescreen.ppm \
   -background bin/images/meadow.ppm
 ```
 
@@ -196,7 +198,7 @@ result in much slower performance.
 When you have implemented a correct solution, running
 
 ```sh
-./bin/image-exercise.exe blur -filename bin/images/beach_portrait.ppm -radius 3
+./bin/image_exercise.exe blur -filename bin/images/beach_portrait.ppm -radius 3
 ```
 
 should produce a file called `beach_portrait_blur.ppm` that is the same image as
@@ -286,7 +288,7 @@ effectively zeroes out the 6 high order bits for every color channel of every pi
 should look at the files provided for the previous exercises to see how to set up the
 part of the module that defines a terminal command and read and writes image files. You'll
 also need make a small addition to `image_exercise_lib.ml` to add your new steganography
-command to `image-exercise.exe`.
+command to `image_exercise.exe`.
 
 Once you've thrown out the high order bits, you could display the image, but it would look
 pretty dark. Your brightest pixels would have RGB values of at most 3, so you probably
