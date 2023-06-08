@@ -1,7 +1,12 @@
 # Raster Image Manipulation
 
-In this exercise you will apply your knowledge of lists and loops to the task of *image
-processing*.
+In these exercises you will apply your knowledge of functional programming 
+to the task of *image processing*.
+
+The exercises will help you practice the following skills:
+
+- Exploring and using a new API.
+- Applying algorithms to multi-dimensional data.
 
 ## Background
 
