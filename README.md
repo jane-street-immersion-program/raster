@@ -23,7 +23,8 @@ First fork this repository by visiting
 clicking on the green "Create fork" button at the bottom.
 
 Then clone the fork locally (on your AWS machine) to get started.
-You can clone a repo on the command line like this:
+You can clone a repo on the command line like this 
+(where $USER is your GitHub username):
 
 ```console
 $ git clone git@github.com:$USER/raster.git
