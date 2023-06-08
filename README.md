@@ -7,6 +7,9 @@ The exercises will help you practice the following skills:
 
 - Exploring and using a new API.
 - Applying algorithms to multi-dimensional data.
+- Handling boundary conditions.
+- Using `map` and `mapi` functions.
+- Thinking about the binary representation of numbers.
 
 ## Background
 
@@ -153,7 +156,7 @@ the choice depends on things like the skin tone of the star.] This problem asks 
 something similar.
 
 We can *combine* an image of, say, James Franco on the set of *Oz the Great and Powerful*
-(`oz_bluescreen.png`) with an image of scenery (`meadow.png`) by replacing the bluish
+(`oz_bluescreen.ppm`) with an image of scenery (`meadow.ppm`) by replacing the bluish
 pixels in the first picture with pixels from a background picture. To do this, we have to
 figure out which pixels are bluish (and can be changed) and which ones correspond to the
 actor and props (and should be left alone). Identifying which pixels are sufficiently blue
@@ -261,7 +264,7 @@ Some tips:
    not work correctly, because the *error* never gets a chance to accumulate.
 
 <center>
-<img src="./images/reference-beach_portrait_dither.png" width="350">
+<img src="./images/reference-beach_portrait_dither.png" width="400">
 </center>
 
 ## 5 Hidden Image
@@ -380,7 +383,7 @@ Be sure to apply error separately for each color channel.
 An example output image with $n = 2$:
 
 <center>
-<img src="./images/reference-beach_portrait_dither_color.png" width="350">
+<img src="./images/reference-beach_portrait_dither_color.png" width="400">
 </center>
 
 ### Edge Detection
