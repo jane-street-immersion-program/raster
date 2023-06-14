@@ -134,7 +134,7 @@ the original image. That is $R_{gray} = G_{gray} = B_{gray} = \frac{R + G + B}{3
 you have implemented a correct solution, running
 
 ```sh
-dune exec bin/image_exercise.exe grayscale -filename images/beach_portrait.ppm
+dune exec bin/image_exercise.exe -- grayscale -filename images/beach_portrait.ppm
 ```
 
 from the project directory should produce a file called `beach_portrait_gray.ppm`
@@ -168,7 +168,7 @@ image with the appropriate pixels in `image` replaced with pixels from `backgrou
 you have implemented a correct solution, running
 
 ```sh
-dune exec bin/image_exercise.exe bluescreen -foreground images/oz_bluescreen.ppm \
+dune exec bin/image_exercise.exe -- bluescreen -foreground images/oz_bluescreen.ppm \
   -background images/meadow.ppm
 ```
 
@@ -214,7 +214,7 @@ result in much slower performance.
 When you have implemented a correct solution, running
 
 ```sh
-dune exec bin/image_exercise.exe blur -filename images/beach_portrait.ppm -radius 3
+dune exec bin/image_exercise.exe -- blur -filename images/beach_portrait.ppm -radius 3
 ```
 
 should produce a file called `beach_portrait_blur.ppm` that is the same image as
