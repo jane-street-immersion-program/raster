@@ -3,7 +3,8 @@ open! Core
 (**
    The [Image] module provides functions to manipulate 2D images in the Portable Pixmap
    (PPM) format. Each pixel in the image is represented using the [Pixel.t] type. The main
-   type provided by this module is [t], which represents the images.
+   type provided by this module is [t], which represents the images. The pixel at position
+   0,0 is the top left corner of the image.
 
    Here's an outline of the functionalities provided by this module:
 
