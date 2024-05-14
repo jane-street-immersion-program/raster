@@ -7,7 +7,7 @@ type t =
   ; max_val : int
   ; image : Pixel.t array
   }
-[@@deriving sexp, fields]
+[@@deriving sexp_of, fields ~getters]
 
 let load_ppm ~filename =
   let lines = In_channel.read_lines filename in
@@ -45,9 +45,7 @@ let load_ppm ~filename =
       let channel_val = Int.of_string channel in
       if channel_val > max_val || channel_val < 0
       then
-        raise_s
-          [%message
-            "invalid pixel color value" (channel_val : int) (max_val : int)];
+        raise_s [%message "invalid pixel color value" (channel_val : int) (max_val : int)];
       flat_image.(!idx) <- channel_val;
       idx := !idx + 1));
   if !idx < Array.length flat_image
@@ -169,6 +167,32 @@ let make ?(max_val = 255) ~width ~height pixel =
   { image = Array.create ~len:(width * height) pixel; width; height; max_val }
 ;;
 
+let to_graphics_image t =
+  let colors_flat = Array.map t.image ~f:Pixel.to_color in
+  let rows = Array.make_matrix ~dimx:t.height ~dimy:t.width Graphics.black in
+  for row = 0 to t.height - 1 do
+    for col = 0 to t.width - 1 do
+      let idx = xy_to_idx t ~x:col ~y:row in
+      rows.(row).(col) <- colors_flat.(idx)
+    done
+  done;
+  Graphics.make_image rows
+;;
+
+let of_graphics_image image =
+  let rows = Graphics.dump_image image in
+  let height = Array.length rows in
+  let width = Array.length rows.(0) in
+  let image = make ~width ~height Pixel.zero in
+  for row = 0 to height - 1 do
+    for col = 0 to width - 1 do
+      let pixel = rows.(row).(col) in
+      set image ~x:col ~y:row (Pixel.of_color pixel)
+    done
+  done;
+  image
+;;
+
 let simple_test data ~f =
   Expect_test_helpers_async.with_temp_dir (fun dirname ->
     let filename =
@@ -182,12 +206,14 @@ let simple_test data ~f =
 ;;
 
 let%expect_test "round trip" =
-  let data = {|P3
+  let data =
+    {|P3
 2 2
 65535
 50000 0 0 0 50000 0
 0 0 50000 50000 0 0
-|} in
+|}
+  in
   simple_test data ~f:(fun filename ->
     let image = load_ppm ~filename in
     save_ppm image ~filename:(filename ^ ".out");
@@ -199,8 +225,10 @@ let%expect_test "round trip" =
 let%expect_test "invalid input images" =
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|P3
-|} in
+      let data =
+        {|P3
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -208,9 +236,11 @@ let%expect_test "invalid input images" =
   [%expect {| "Reached the end of the file before dimensions line" |}];
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|P3
+      let data =
+        {|P3
 abc
-|} in
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -218,9 +248,11 @@ abc
   [%expect {| ("invalid dimensions line" (line abc)) |}];
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|P3
+      let data =
+        {|P3
 2 2
-|} in
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -228,10 +260,12 @@ abc
   [%expect {| "Reached the end of the file before max value line" |}];
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|P3
+      let data =
+        {|P3
 2 2
 -100
-|} in
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -239,12 +273,14 @@ abc
   [%expect {| "max pixel value must be positive" |}];
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|XX
+      let data =
+        {|XX
 2 2
 65535
 50000 0 0 0 50000 0
 0 0 50000 50000 0 0
-|} in
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -252,12 +288,14 @@ abc
   [%expect {| "Invalid magic number, plain PPM file should begin with P3" |}];
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|P3
+      let data =
+        {|P3
 2 2
 40000
 50000 0 0 0 50000 0
 0 0 50000 50000 0 0
-|} in
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -266,15 +304,18 @@ abc
     {|
     ("invalid pixel color value"
       (channel_val 50000)
-      (max_val     40000)) |}];
+      (max_val     40000))
+    |}];
   let%bind () =
     Expect_test_helpers_async.require_does_raise_async [%here] (fun () ->
-      let data = {|P3
+      let data =
+        {|P3
 2 2
 65535
 50000 0 0 0 50000
 0 0 50000 50000 0 0
-|} in
+|}
+      in
       simple_test data ~f:(fun filename ->
         let _image = load_ppm ~filename in
         return ()))
@@ -284,23 +325,25 @@ abc
 ;;
 
 let%expect_test "get and set" =
-  let data = {|P3
+  let data =
+    {|P3
 2 2
 65535
 50000 0 0 0 50000 0
-0 0 50000 50000 0 0|} in
+0 0 50000 50000 0 0|}
+  in
   simple_test data ~f:(fun filename ->
     let image = load_ppm ~filename in
     [%test_result: int * int * int] (get image ~x:0 ~y:0) ~expect:(50000, 0, 0);
     [%test_result: int * int * int] (get image ~x:1 ~y:0) ~expect:(0, 50000, 0);
     [%test_result: int * int * int] (get image ~x:0 ~y:1) ~expect:(0, 0, 50000);
-    Expect_test_helpers_base.require_does_raise [%here] (fun () ->
-      get image ~x:(-1) ~y:0);
+    Expect_test_helpers_base.require_does_raise [%here] (fun () -> get image ~x:(-1) ~y:0);
     [%expect
       {|
-        ("x-coordinate outside the image"
-          (x     -1)
-          (width 2)) |}];
+      ("x-coordinate outside the image"
+        (x     -1)
+        (width 2))
+      |}];
     set image ~x:0 ~y:0 (40000, 0, 0);
     set image ~x:1 ~y:0 (0, 40000, 0);
     set image ~x:0 ~y:1 (0, 0, 40000);
@@ -311,18 +354,21 @@ let%expect_test "get and set" =
       set image ~y:100 ~x:0 (40000, 0, 0));
     [%expect
       {|
-        ("y-coordinate outside the image"
-          (y      100)
-          (height 2)) |}];
+      ("y-coordinate outside the image"
+        (y      100)
+        (height 2))
+      |}];
     return ())
 ;;
 
 let%expect_test "slice" =
-  let data = {|P3
+  let data =
+    {|P3
 2 2
 65535
 50000 0 0 0 50000 0
-0 0 50000 50000 0 0|} in
+0 0 50000 50000 0 0|}
+  in
   simple_test data ~f:(fun filename ->
     let image = load_ppm ~filename in
     let sliced_image = slice image ~x_start:0 ~x_end:1 ~y_start:0 ~y_end:2 in
@@ -336,55 +382,63 @@ let%expect_test "slice" =
       slice image ~x_start:(-1) ~x_end:1 ~y_start:0 ~y_end:2);
     [%expect
       {|
-        ("x-coordinate outside the image"
-          (x     -1)
-          (width 2)) |}];
+      ("x-coordinate outside the image"
+        (x     -1)
+        (width 2))
+      |}];
     Expect_test_helpers_base.require_does_raise [%here] (fun () ->
       slice image ~x_start:0 ~x_end:1 ~y_start:0 ~y_end:(-2));
     [%expect
       {|
-        ("y-coordinate outside the image"
-          (y      -2)
-          (height 2)) |}];
+      ("y-coordinate outside the image"
+        (y      -2)
+        (height 2))
+      |}];
     (* Start before end *)
     Expect_test_helpers_base.require_does_raise [%here] (fun () ->
       slice image ~x_start:1 ~x_end:0 ~y_start:0 ~y_end:2);
     [%expect
       {|
-        ("x_start must be <= x_end"
-          (x_start 1)
-          (x_end   0)) |}];
+      ("x_start must be <= x_end"
+        (x_start 1)
+        (x_end   0))
+      |}];
     Expect_test_helpers_base.require_does_raise [%here] (fun () ->
       slice image ~x_start:0 ~x_end:1 ~y_start:2 ~y_end:0);
     [%expect
       {|
-        ("y_start must be <= y_end"
-          (y_start 2)
-          (y_end   0)) |}];
+      ("y_start must be <= y_end"
+        (y_start 2)
+        (y_end   0))
+      |}];
     (* End too large *)
     Expect_test_helpers_base.require_does_raise [%here] (fun () ->
       slice image ~x_start:0 ~x_end:100 ~y_start:0 ~y_end:2);
     [%expect
       {|
-        ("x-coordinate outside the image"
-          (x     100)
-          (width 2)) |}];
+      ("x-coordinate outside the image"
+        (x     100)
+        (width 2))
+      |}];
     Expect_test_helpers_base.require_does_raise [%here] (fun () ->
       slice image ~x_start:0 ~x_end:0 ~y_start:0 ~y_end:200);
     [%expect
       {|
-        ("y-coordinate outside the image"
-          (y      200)
-          (height 2)) |}];
+      ("y-coordinate outside the image"
+        (y      200)
+        (height 2))
+      |}];
     return ())
 ;;
 
 let%expect_test "mean" =
-  let data = {|P3
+  let data =
+    {|P3
 2 2
 65535
 50000 0 0 0 50000 0
-0 0 50000 50000 0 0|} in
+0 0 50000 50000 0 0|}
+  in
   simple_test data ~f:(fun filename ->
     let image = load_ppm ~filename in
     let mean = mean_pixel image in
@@ -399,45 +453,48 @@ let%expect_test "mean" =
 ;;
 
 let%expect_test "map and mapi" =
-  let data = {|P3
+  let data =
+    {|P3
 2 2
 65535
 50000 0 0 0 50000 0
-0 0 50000 50000 0 0|} in
+0 0 50000 50000 0 0|}
+  in
   simple_test data ~f:(fun filename ->
     let image = load_ppm ~filename in
     print_s [%sexp (map image ~f:(fun (r, g, b) -> r - 1, g / 2, b + 1) : t)];
     [%expect
       {|
       ((width 2) (height 2) (max_val 65535)
-       (image ((49999 0 1) (-1 25000 1) (-1 0 50001) (49999 0 1)))) |}];
+       (image ((49999 0 1) (-1 25000 1) (-1 0 50001) (49999 0 1))))
+      |}];
     print_s [%sexp (mapi image ~f:(fun ~x ~y _ -> x, y, x + y) : t)];
     [%expect
       {|
       ((width 2) (height 2) (max_val 65535)
-       (image ((0 0 0) (1 0 1) (0 1 1) (1 1 2)))) |}];
+       (image ((0 0 0) (1 0 1) (0 1 1) (1 1 2))))
+      |}];
     return ())
 ;;
 
 let%expect_test "fold and foldi" =
-  let data = {|P3
+  let data =
+    {|P3
 2 2
 65535
 50000 0 0 0 50000 0
-0 0 50000 50000 0 0|} in
+0 0 50000 50000 0 0|}
+  in
   simple_test data ~f:(fun filename ->
     let image = load_ppm ~filename in
     print_s
       [%sexp
-        (fold ~init:Pixel.zero image ~f:(fun acc pixel -> Pixel.(acc + pixel))
-         : Pixel.t)];
-    [%expect {|
-      (100000 50000 50000) |}];
+        (fold ~init:Pixel.zero image ~f:(fun acc pixel -> Pixel.(acc + pixel)) : Pixel.t)];
+    [%expect {| (100000 50000 50000) |}];
     print_s
       [%sexp
         (foldi ~init:(0, 0) image ~f:(fun ~x ~y (xsum, ysum) _ -> xsum + x, ysum + y)
          : int * int)];
-    [%expect {|
-      (2 2) |}];
+    [%expect {| (2 2) |}];
     return ())
 ;;

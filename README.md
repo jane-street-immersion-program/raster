@@ -1,6 +1,6 @@
 # Raster Image Manipulation
 
-In these exercises you will apply your knowledge of functional programming 
+In these exercises you will apply your knowledge of functional programming
 to the task of *image processing*.
 
 The exercises will help you practice the following skills:
@@ -13,7 +13,7 @@ The exercises will help you practice the following skills:
 
 ## Background
 
-You can think of a digital image as a large two-dimensional array of pixels, 
+You can think of a digital image as a large two-dimensional array of pixels,
 each of which has a red (R) value, a green (G) value, and a blue (B) value.
 An R, G, or B value is just an integer between 0 and a maximum value defined by the image
 (usually 255 or 65535). To transform an image, you can *map over* all of these pixels,
@@ -26,12 +26,12 @@ let no_green img = Image.map img ~f:(fun (r, g, b) -> (r, 0, b))
 
 ## Prep Work
 
-First fork this repository by visiting 
+First fork this repository by visiting
 [this page](https://github.com/jane-street-immersion-program/raster/fork) and
 clicking on the green "Create fork" button at the bottom.
 
 Then clone the fork locally (on your AWS machine) to get started.
-You can clone a repo on the command line like this 
+You can clone a repo on the command line like this
 (where $USER is your GitHub username):
 
 ```console
@@ -96,13 +96,23 @@ The files for this exercise are contained in this repository. These files are:
       `blue_screen.ml`
     - `reference-beach_portrait_gray.ppm`: the expected output image for `grayscale.ml`,
       provided for your reference
-    - `reference-oz_meadow.ppm`: the expected output image for `blue_screen.ml`, provided
-      for your reference
-    - `reference-oz_meadow_improved.ppm`: the expected output image for the CHALLENGE
-      improvement to `blue_screen.ml`, provided for your reference
+    - `reference-oz_bluescreen_vfx.ppm`: the expected output image for `blue_screen.ml`,
+      provided for your reference
     - `reference-beach_portrait_blur.ppm`: the expected output image for `blur.ml`,
       provided for your reference
-    - `fruit.ppm`
+    - `reference-beach_portrait_dither.ppm`: the expected output image for `dither.ml`,
+      provided for your reference
+    - `reference-oz_bluescreen_vfx_improved.ppm`: an example output image for the
+      [improved blue screening](#improved-blue-screening) extension, provided for your
+      reference
+    - `reference-meadow-solarize.ppm`: the expected output image for the
+      [solarize](#solarize) extension, provided for your reference
+    - `reference-beach_portrait_dither_color.ppm`: the expected output image for the
+      [color dithering](#color-dithering) extension, provided for your reference
+    - `reference-beach_portrait_edge.ppm`: the expected output image for the [edge
+      detection](#edge-detection) extension, provided for your reference
+    - `reference-beach_portrait_mosaic.ppm`: an example output image for the
+      [mosaic](#mosaic) extension, provided for your reference
 - `test` directory
     - Starter code for unit tests you may wish to write.
 
@@ -144,6 +154,22 @@ that is the same image as `reference-beach_portrait_gray.ppm`:
 <img src="./images/reference-beach_portrait_gray.png" width="300">
 </center>
 
+### Write an expect test
+For this and the following exercises, you'll write an expect test to verify that your solution is correct.
+Since you're working with images, a manually testing by looking at the output image is always a good first step.
+But automated expect tests have some key advantages:
+
+1. They run every time the code is compiled, so they automatically catch situations where a future change introduces a bug with older code.
+2. They can be more precise than visual inspection, and catch bugs that aren't visually obvious (such as a bug where pixels at the edge of the image are not being correctly transformed).
+
+The easiest way to write such a test is to make use of the reference image we provide (`images/reference-beach_portrait_gray.ppm`).
+If the image your code produces is the same as the reference image, then your code is correct.
+
+It's worth thinking carefully about what your test should print in the case where the images are different.
+The simplest thing is to display a message like `"Output doesn't match reference"`, but this isn't the most useful for debugging.
+Printing out the difference between the expected output and the actual output is generally a good testing strategy.
+For images, this can work if the difference is small enough, but you'll probably find it more useful to print summary information (e.g., the number of pixels that differ) or a subset of the results (e.g., the location and values of the first pixel that differs).
+
 ## 2 Blue Screening
 Movies&mdash;particularly (non-animated) action movies that use a lot of special
 effects&mdash;often use a technique called *blue screening* to generate some scenes. The
@@ -183,6 +209,10 @@ the same image as `reference-oz_bluescreen_vfx.png`.
 <center>
 <img src="./images/reference-oz_bluescreen_vfx.png" width="800">
 </center>
+
+### Write an expect test
+Write an expect test that uses the provided reference image (`images/reference-oz_bluescreen_vfx.png`)
+to verify that your solution is correct.
 
 ## 3 Blur
 Modify `blur.ml` to implement the `transform` function. `transform` should create and
@@ -224,6 +254,10 @@ should produce a file called `beach_portrait_blur.ppm` that is the same image as
 <img src="./images/reference-beach_portrait_blur.png" width="350">
 </center>
 
+### Write an expect test
+Write an expect test that uses the provided reference image (`images/reference-beach_portrait_blur.png`)
+to verify that your solution is correct.
+
 ## 4 Dither
 In the file called `dither.ml`, implement the `transform` function. Dithering is a
 technique used to print a gray picture in a legacy medium (such as a newspaper) where no
@@ -233,19 +267,17 @@ algorithm*, which works as follows:
 
 1. Loop over all pixels as always, from top to bottom and, within each row, from left to
    right.
-2. For each pixel: if its value is larger than 0.5, then set it to 1.0 (pure
-   white). Otherwise, set it to 0 (pure black). Since this is a grayscale image, the red,
+2. For each pixel: if its value is larger than half the maximum pixel value, then set it to the maximum value (pure
+   white). Otherwise, set it to the minimum value (i.e, all 0s, pure black). Since this is a grayscale image, the red,
    green, and blue channels will all be equal. Record the *error*, which represents how
    much blackness we have added to this pixel, by taking the old value of this pixel minus
    the new one. Note that the error can be positive or negative, depending on whether you
    adjusted the color *blackwards* or *whitewards*.
 3. Distribute this pixel's error to adjacent pixels as follows:
-    - Add 7/16 of the error to the pixel immediately to the right (*east*).
-    - Add 3/16 of the error to the pixel immediately diagonally to the bottom left
-      (*southwest*).
-    - Add 5/16 of the error to the pixel immediately below (*south*).
-    - Add 1/16 of the error to the pixel immediately diagonally to the bottom right
-      (*southeast*).
+    - Add 7/16 of the error to the pixel immediately to the right.
+    - Add 3/16 of the error to the pixel immediately diagonally to the bottom left.
+    - Add 5/16 of the error to the pixel immediately below.
+    - Add 1/16 of the error to the pixel immediately diagonally to the bottom right.
 
 This is an algorithm where a pure functional approach may not work as well. `Image.set`
 will likely be useful in distributing the error.
@@ -257,8 +289,8 @@ part of the error.
 Some tips:
 
 1. Dithering should only be done on grayscale images&mdash;actually you can dither color
-   images, too, but it's a bit more complicated&mdash;so use `gray` to convert an image to
-   gray before you get started.
+   images, too, but it's a bit more complicated&mdash;so use `Grayscale.transform` to convert an image to
+   gray as the first step.
 1. In order for dithering to work, you must make your changes to the same image that you
    are looping over. Dithering by reading one image and making your changes on a copy will
    not work correctly, because the *error* never gets a chance to accumulate.
@@ -267,69 +299,9 @@ Some tips:
 <img src="./images/reference-beach_portrait_dither.png" width="400">
 </center>
 
-## 5 Hidden Image
-Steganography is the process of hiding information in an image. If you haven't already,
-take a look at the file `fruit.ppm`. Neat, huh? A picture of fruit. Just a regular old
-harmless bowl of fruit. Or is there more here than meets the eye?
-
-Actually, there is. Embedded in this image is data. Recall that every pixel in an image
-has a red, a green and a blue channel, and (in this image, at least) each channel can have
-one of 256 values (0 through 255). If we were to write these numbers in binary, we'd need
-8 bits: 00000000 in binary is 0, 00000101 in binary is 5, and the biggest binary number we
-can write, 11111111, is 255.
-
-Suppose we changed the two low-order bits (the rightmost bits). How much might this change
-the value of an 8 bit number? At most, we switch those last two bits from 00 to 11 or
-vice-versa. This is a change of 3. Out of 256 possible values, this is a change of just
-over 1%, and again, that's the most it could be. So this change is pretty insignificant.
-You typically would have to look very closely to notice it, if you could see it at all.
-
-What we've done is alter the two lowest order (rightmost) bits of each channel to encode
-data. We could have encoded text, but here we've simply encoded another image. If we
-wanted one pixel to have a lot of red, I set the two low bits to 11. If we wanted a fair
-bit of red, just a touch or red, or no red at all, we'd use 10, 01, or 00 respectively.
-
-For example, if a pixel in the fruit image has a red value of 10110101, then all you
-really care about is that the value ends in 01, and thus indicates that the corresponding
-pixel in our secret image uses the second lowest possible red value. To convert this to
-the appropriate value, the first thing you should do is zero out the 6 high order bits. So
-10110101 should become 00000001. You might figure out what standard arithmetic and modular
-operations are needed to implement the conversion or devise some other approach. In the
-example above, the original binary number represents 181, and you'd like it changed to
-a 1. The numbers 182 and 186 should both be changed to 2's, the numbers 183, 187, and 191
-should each be changed to 3's, etc.
-
-Write a module called `steganography.ml` that reads in the image of the fruit and
-effectively zeroes out the 6 high order bits for every color channel of every pixel. You
-should look at the files provided for the previous exercises to see how to set up the
-part of the module that defines a terminal command and read and writes image files. You'll
-also need make a small addition to `image_exercise_lib.ml` to add your new steganography
-command to `image_exercise.exe`.
-
-Once you've thrown out the high order bits, you could display the image, but it would look
-pretty dark. Your brightest pixels would have RGB values of at most 3, so you probably
-wouldn't see much. Therefore, we'll amplify the color by shifting the bits we have 6 bits
-to the left. So 00000001 should become 01000000. How do you do this bit shift? Multiply by
-$2^6 = 64$ or use OCaml's *logical left shift* operator, `lsl`. Save the new image to a
-file called `mystery.ppm` and take a look at it. You'll know if it worked.
-
-## Testing Advice
-Your best tool for determining the correctness of your output images is the provided
-reference images. A visual comparison of the two will catch any major differences. To
-detect bugs that result in minor differences from the expected output, you might consider
-writing code that loads both your image and the reference image. You could then write code
-to compare the values at each pixel of your image to the corresponding pixel in the
-reference image to check for any differences.
-
-Since `.ppm` images are just text files, you can use the Linux `diff` command to quickly
-check whether there are any differences. Running
-
-```sh
-diff -q image1.ppm image2.ppm
-```
-
-will output nothing if `image1.ppm` and `image2.ppm` are identical and otherwise print a
-message that they differ.
+### Write an expect test
+Write an expect test that uses the provided reference image (`images/reference-beach_portrait_dither.png`)
+to verify that your solution is correct.
 
 ## Extensions
 
@@ -344,7 +316,7 @@ such that these errors are avoided. Try and produce an image at least as good as
 `reference-oz_bluescreen_vfx_improved.png`.
 
 <center>
-<img src="./images/reference-oz_meadow_improved.png" width="800">
+<img src="./images/reference-oz_bluescreen_vfx_improved.png" width="800">
 </center>
 
 ### Solarize
@@ -362,7 +334,7 @@ This idea can also apply to digital images, where it's known as *pseudo-solariza
 This works as follows: given some threshold value, if a color is above the threshold,
 invert that color.
 
-An example output image with a threshold of 30% of the maximum pixel value:
+An example output image with a threshold of 40% of the maximum pixel value:
 
 <center>
 <img src="./images/reference-meadow_solarize.png" width="600">
@@ -484,4 +456,3 @@ An example output image created by 10,000 moves of 10 pixel-by-10 pixel regions:
 <center>
 <img src="./images/reference-beach_portrait_mosaic.png" width="350">
 </center>
-

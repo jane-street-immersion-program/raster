@@ -36,3 +36,12 @@ val of_int : int -> t
     where R, G, and B are the integer values of the red, green, and blue channels,
     respectively. *)
 val to_string : t -> string
+
+(** Convert from a [t] to an ocamlgraphics color (i.e., a [Graphics.color]) *)
+val to_color : t -> Graphics.color
+
+(** Convert from a [Graphics.color] to a [t]) *)
+val of_color : Graphics.color -> t
+
+(** [equal t1 t2] returns true if the pixel values of [t1] and [t2] are equal. *)
+val equal : t -> t -> bool

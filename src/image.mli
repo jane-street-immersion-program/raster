@@ -23,6 +23,9 @@ type t
     PPM format is invalid. *)
 val load_ppm : filename:string -> t
 
+val to_graphics_image : t -> Graphics.image
+val of_graphics_image : Graphics.image -> t
+
 (** [width image] returns the width of the given [image]. *)
 val width : t -> int
 
