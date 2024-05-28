@@ -9,7 +9,6 @@ The exercises will help you practice the following skills:
 - Applying algorithms to multi-dimensional data.
 - Handling boundary conditions.
 - Using `map` and `mapi` functions.
-- Thinking about the binary representation of numbers.
 
 ## Background
 
