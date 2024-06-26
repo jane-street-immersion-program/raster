@@ -23,7 +23,10 @@ type t
     PPM format is invalid. *)
 val load_ppm : filename:string -> t
 
+(** Convert a [t] to a [Graphics.image] that can be displayed with [Graphics.draw_image]. *)
 val to_graphics_image : t -> Graphics.image
+
+(** Convert a [Graphics.image] to a [t]. *)
 val of_graphics_image : Graphics.image -> t
 
 (** [width image] returns the width of the given [image]. *)
