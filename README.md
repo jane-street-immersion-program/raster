@@ -330,7 +330,7 @@ src="https://upload.wikimedia.org/wikipedia/commons/1/18/Hydroelectric_power_pla
 </center>
 
 This idea can also apply to digital images, where it's known as *pseudo-solarization*.
-This works as follows: given some threshold value, if a color is above the threshold,
+This works as follows: given some threshold value, if a color (red, green, or blue) is above the threshold,
 invert that color.
 
 An example output image with a threshold of 40% of the maximum pixel value:
